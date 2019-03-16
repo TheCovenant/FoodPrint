@@ -10,4 +10,6 @@ public class History extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_history);
     }
+
+    String hello = "sup";
 }
