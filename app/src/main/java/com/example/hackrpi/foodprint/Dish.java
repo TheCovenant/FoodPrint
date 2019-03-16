@@ -1,10 +1,13 @@
 package com.example.hackrpi.foodprint;
 
+import android.graphics.drawable.Drawable;
+
 public class Dish {
 
     String name;
     Ingredient[] ingredients;
     int servingCount;
+    Drawable image;
 
 
     public Dish(String name, Ingredient[] ingredients, int servingCount) {
