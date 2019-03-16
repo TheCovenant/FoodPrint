@@ -19,7 +19,7 @@ public class Dish {
         this.servingCount = newServingCount;
     }
 
-    public Double getTotalCO2() {
+    public double getTotalCO2() {
         double total = 0.0;
         for (int i = 0; i < ingredients.length; i++) {
            total += ingredients[i].getCO2();
