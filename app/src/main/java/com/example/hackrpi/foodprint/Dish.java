@@ -21,7 +21,7 @@ public class Dish {
 
     public Double getTotalCO2() {
         double total = 0.0;
-        for (int i = 0; i < length(ingredients); i++) {
+        for (int i = 0; i < ingredients.length; i++) {
            total += ingredients[i].getCO2();
         }
         return total;
