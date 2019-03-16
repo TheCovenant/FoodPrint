@@ -11,5 +11,5 @@ public class History extends AppCompatActivity {
         setContentView(R.layout.activity_history);
     }
 
-    String hello = "sup";
+    String hello = "supppp";
 }
