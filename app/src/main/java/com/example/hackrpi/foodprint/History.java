@@ -2,18 +2,21 @@ package com.example.hackrpi.foodprint;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.view.View;
 
+import android.content.Intent;
 
-
+/*UNCOMMMNET THESE IMPORTS */
 import com.opencsv.CSVReader;
-import com.opencsv.*;
 import com.opencsv.CSVWriter;
-
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringWriter;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.HashMap;
@@ -28,11 +31,17 @@ public class History extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_history);
-        readIngredients();
+        //readIngredients();
+
     }
 
+    public void toSearch(View view) {
+        Intent intent = new Intent(this, searchResult.class);
+        startActivity(intent);
 
-    public void readIngredients() {
+    }
+    public void readIngredients()
+        {
         try {
 
             // Create an object of filereader
@@ -109,3 +118,4 @@ public class History extends AppCompatActivity {
         }
     }
 }
+
