@@ -1,6 +1,8 @@
 package com.example.hackrpi.foodprint;
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -22,6 +24,7 @@ public class selectServing extends AppCompatActivity {
         Intent intent = getIntent();
         dish = (Dish) intent.getParcelableExtra("object");
         text = findViewById(R.id.servingText);
+        text.getBackground().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
         submit = findViewById(R.id.submitButton);
 
     }
