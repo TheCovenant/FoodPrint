@@ -2,21 +2,17 @@ package com.example.hackrpi.foodprint;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.widget.EditText;
-import android.widget.ImageView;
 import android.view.View;
-
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import android.content.Intent;
 
-/*UNCOMMMNET THESE IMPORTS */
 import com.opencsv.CSVReader;
-import com.opencsv.CSVWriter;
-import java.io.FileReader;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.StringWriter;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.HashMap;
@@ -27,11 +23,14 @@ import java.text.NumberFormat;
 
 public class History extends AppCompatActivity {
 
+
+    krisIngredientList temp;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_history);
-        //readIngredients();
+        readIngredients();
+
 
     }
 
@@ -40,23 +39,90 @@ public class History extends AppCompatActivity {
         startActivity(intent);
 
     }
-    public void readIngredients()
-        {
+
+    public List<Dish> searchRecipe(String search) {
+
+        List<Dish> dish_list = new ArrayList<>();
+        String app_id = "6c5d04e2"; //do not change these values
+        String app_key = "efc4f5c31a452257862f8a8153d2c6d4"; //do not change these values
+        String user_input = search; //Default value is chicken
+
+        if(user_input.contains(" ")){
+            user_input = user_input.replaceAll(" ", "%20");
+        }
+        String url = "https://api.edamam.com/search?q=" + user_input + "&from=0&to=20&app_id=" + app_id + "&app_key="+ app_key;
+
+        try {
+            URL obj = new URL(url);
+
+            HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+
+            BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+
+            String inputLine;
+            StringBuffer response = new StringBuffer();
+            while((inputLine = in.readLine()) != null) {
+                response.append(inputLine);
+            }
+            in.close();
+
+            JSONObject myresponse = new JSONObject(response.toString());
+            JSONArray hits = (JSONArray) myresponse.get("hits");
+
+            for ( int i = 0; i < hits.length(); i++) {
+
+                JSONObject val = hits.getJSONObject(i);
+
+                JSONObject recipe = val.getJSONObject("recipe");
+
+                JSONArray ingredients_list = recipe.getJSONArray("ingredients");
+                String image_url = recipe.get("image").toString();
+
+                List<Ingredient> ingredients_list_final = new ArrayList<>();
+
+                for(int t = 0; t < ingredients_list.length(); ++t) {
+
+                    JSONObject ingredient = ingredients_list.getJSONObject(t);
+
+
+                    String ingredient_name = ingredient.get("text").toString();
+                    double amount = 0;
+                    try {
+                        amount = Double.parseDouble(ingredient.get("weight").toString());
+                    }
+                    catch (NumberFormatException e){
+                        System.out.println("NUMBER ERROR");
+                    }
+                    Ingredient temp_ing = new Ingredient(ingredient_name, amount, temp); //create new ingredient object
+                    ingredients_list_final.set(t, temp_ing);						   //add ingredient to recipe list
+                }
+                Dish dish_info = new Dish(recipe.getString("label"), ingredients_list_final, recipe.getInt("yield") , image_url);
+                dish_list.add(dish_info);
+            }
+
+        }
+        catch(Exception JSONException){
+            System.out.println("HI IF YOU SEE PLEASE REPORT TO ERROR TEAM");
+        }
+
+        return dish_list;
+
+    }
+
+
+    public void readIngredients() {
+
+        ArrayList<krisIngredient> ingred_list = new ArrayList<>();
         try {
 
-            // Create an object of filereader
-            // class with CSV file as a parameter.
-         //   FileReader filereader = new FileReader(file);
 
             InputStream is = getResources().openRawResource(R.raw.data);
             CSVReader csvReader = new CSVReader(new InputStreamReader(is));
-            // file reader as a parameter
-           // CSVReader csvReader = new CSVReader(filereader);
+
             String[] nextRecord;
             String unit;
             int line = 0;
             int counter = 0;
-            ArrayList<krisIngredient> ingred_list = new ArrayList<>();
             HashMap<String, HashMap<String, krisIngredient>> food_csv = new HashMap<>();
             food_csv.put("fruit", new HashMap<String, krisIngredient>());
             food_csv.put("vegetable", new HashMap<String, krisIngredient>());
@@ -66,7 +132,6 @@ public class History extends AppCompatActivity {
             food_csv.put("dairy", new HashMap<String, krisIngredient>());
             food_csv.put("oil", new HashMap<String, krisIngredient>());
             food_csv.put("other", new HashMap<String, krisIngredient>());
-            // we are going to read data line by line
             while ((nextRecord = csvReader.readNext()) != null) {
                 if(line == 0) {
                     line += 1;
@@ -116,6 +181,9 @@ public class History extends AppCompatActivity {
         catch (Exception e) {
             e.printStackTrace();
         }
+
+        temp = new krisIngredientList(ingred_list);
     }
+
 }
 

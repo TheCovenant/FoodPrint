@@ -12,11 +12,20 @@ public class Ingredient implements Parcelable {
     double serving_size;
     double price_per_serving;
 
-
+    String[] measurements = new String[] {"frozen", "cups", "cup", "oz", "grams", "gram", "whole",
+            "halved", "half", "quartered","cloves", "slices", "Tbsp", "Pinch", "-", "to ", "tsp",
+            "tablespoons", "teaspoons", "tablespoon", "teaspoon", "thin", "thick", "pint", "quart", "gallon","medium", "tbsp",
+            "--", "brined", "fresh", "chopped", "pinch", "shredded", "grated", "ml" ,"finely", "taste",
+            "coarse", "ly", "plus", "c. ", " x ", "recipes"} ;
     public Ingredient(String name, double weight, krisIngredientList krisIngredientList ) {
         this.weight = weight;
         double quantity = 0;
         String food = "";
+
+        name = name.replaceAll("-", " ");
+        name = name.replaceAll("Â", "");
+        name = name.replaceAll(",", " ");
+
         String[] split = name.split("\\s+");
         double fraction = 0;
         for(int i = 0; i < split.length; i++) {
@@ -24,7 +33,12 @@ public class Ingredient implements Parcelable {
 
             if(split[i].contains("/")) {
                 String[] fractionString = split[i].split("/");
-                fraction = Double.parseDouble(fractionString[0]) / Double.parseDouble(fractionString[1]);
+                fraction = 0;
+                try {
+                    fraction = Double.parseDouble(fractionString[0]) / Double.parseDouble(fractionString[1]);
+                }
+                catch (NumberFormatException e) {
+                }
                 quantity += fraction;
             }
             else {
@@ -37,8 +51,23 @@ public class Ingredient implements Parcelable {
                     food += " ";
                 }
             }
+
         }
         this.name = food.substring(0, food.length() - 1);
+
+        for(int j = 0; j < measurements.length; ++j ) {
+
+            if(name.contains(measurements[j])) {
+
+                String tempWord = measurements[j] + " ";
+                this.name = this.name.replaceAll(measurements[j], "");
+
+                //covers case if the word is at the end of the string
+                tempWord = " " + measurements[j];
+                this.name = this.name.replaceAll(tempWord, "");
+            }
+        }
+        this.name = this.name.trim();
         this.quantity = quantity;
         krisIngredient matchingIngredient = krisIngredientList.getMatchingKrisIngredient(this);
         if (!matchingIngredient.equals(null)) {

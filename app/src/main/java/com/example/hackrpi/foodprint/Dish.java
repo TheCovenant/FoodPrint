@@ -14,18 +14,19 @@ public class Dish implements Parcelable{
     int servingCount;
     Drawable image;
     int imageId;
+    String imageUrl;
 
 
-    public Dish(String name, List<Ingredient> ingredients, int servingCount) {
+    public Dish(String name, List<Ingredient> ingredients, int servingCount, String imageUrl) {
 
         this.name = name;
         this.ingredients = ingredients;
         this.servingCount = servingCount;
+        this.imageUrl = imageUrl;
 
     }
 
-    public Dish(String aName, Drawable aImage, int id)
-    {
+    public Dish(String aName, Drawable aImage, int id) {
         this.name = aName;
         this.image = aImage;
         this.imageId = id;
@@ -41,6 +42,11 @@ public class Dish implements Parcelable{
            total += ingredients.get(i).getCO2();
         }
         return total;
+    }
+
+    public String getUrl() {
+        String url = new String(this.imageUrl);
+        return url;
     }
 
     @Override
