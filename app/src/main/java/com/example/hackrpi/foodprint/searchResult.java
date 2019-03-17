@@ -20,8 +20,6 @@ public class searchResult extends AppCompatActivity {
         resultList = findViewById(R.id.resultList);
         Intent intent = getIntent();
         List<Dish> dishes = intent.getParcelableArrayListExtra("dishes");
-        Toast.makeText(getApplicationContext(), dishes.size(),
-                Toast.LENGTH_SHORT).show();
 
 
         LinearLayoutManager llm = new LinearLayoutManager(getApplicationContext());

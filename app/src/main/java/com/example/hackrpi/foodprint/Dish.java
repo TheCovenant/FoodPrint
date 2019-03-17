@@ -36,6 +36,17 @@ public class Dish implements Parcelable{
         return total;
     }
 
+    public String getName()
+    {
+        String name = new String(this.name);
+        return name;
+    }
+
+    public Drawable getImage()
+    {
+        return image;
+    }
+
     public String getUrl() {
         String url = new String(this.imageUrl);
         return url;

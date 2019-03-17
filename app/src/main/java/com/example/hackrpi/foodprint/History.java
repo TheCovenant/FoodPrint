@@ -1,10 +1,14 @@
 package com.example.hackrpi.foodprint;
 
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.reflect.Array;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import org.json.JSONArray;
@@ -43,9 +47,10 @@ public class History extends AppCompatActivity {
     }
 
     public void toSearch(View view) {
-        Intent intent = new Intent(this, searchResult.class);
+        //Intent intent = new Intent(this, searchResult.class);
         search_query = search_box.getText().toString();
-        ArrayList<Dish> dishes = searchRecipe(search_query);
+        new AsyncCaller().execute(search_query);
+        //ArrayList<Dish> dishes = searchRecipe(search_query);
         //Toast.makeText(getApplicationContext(), Integer.toString(dishes.size()),
         //        Toast.LENGTH_SHORT).show();
         //intent.putParcelableArrayListExtra("dishes", dishes);
@@ -63,16 +68,15 @@ public class History extends AppCompatActivity {
         }
         String url = "https://api.edamam.com/search?q=" + user_input + "&from=0&to=20&app_id=" + app_id + "&app_key="+ app_key;
 
-        try {
+        try
+        {
             URL obj = new URL(url);
 
 
             HttpURLConnection con = (HttpURLConnection)obj.openConnection();
-
             BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
-            search_box.setVisibility(View.INVISIBLE);
-            Toast.makeText(getApplicationContext(), "yo",
-                    Toast.LENGTH_SHORT).show();
+
+
 
 
             String inputLine;
@@ -119,8 +123,10 @@ public class History extends AppCompatActivity {
 
         }
         catch(Exception JSONException){
-            System.out.println("HI IF YOU SEE PLEASE REPORT TO ERROR TEAM");
+            Log.e("error",JSONException.toString());
+            Log.e("error",Integer.toString(JSONException.getStackTrace()[1].getLineNumber()));
         }
+
         return dish_list;
 
     }
@@ -201,5 +207,40 @@ public class History extends AppCompatActivity {
         temp = new krisIngredientList(ingred_list);
     }
 
+    private class AsyncCaller extends AsyncTask<String, Void, ArrayList<Dish>>
+    {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+            //this method will be running on UI thread
+            Toast.makeText(getApplicationContext(), "Loading...",
+                    Toast.LENGTH_SHORT).show();
+
+        }
+        @Override
+        protected ArrayList<Dish> doInBackground(String... params) {
+            return searchRecipe(params[0]);
+
+
+        }
+
+        @Override
+        protected void onPostExecute(ArrayList<Dish> result) {
+            Toast.makeText(getApplicationContext(), Integer.toString(result.size()),
+                    Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(search_box.getContext(), searchResult.class);
+            intent.putParcelableArrayListExtra("dishes", result);
+            startActivity(intent);
+
+
+            //this method will be running on UI thread
+
+        }
+
+    }
 }
+
+
 

@@ -53,8 +53,8 @@ public class DishRecyclerAdapter extends RecyclerView.Adapter<DishRecyclerAdapte
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, final int i) {
-        viewHolder.dishText.setText(dishes.get(i).name);
-        viewHolder.dishImage.setImageDrawable(dishes.get(i).image);
+        viewHolder.dishText.setText(dishes.get(i).getName());
+        viewHolder.dishImage.setImageDrawable(dishes.get(i).getImage());
         viewHolder.dishImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
