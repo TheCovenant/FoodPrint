@@ -8,8 +8,11 @@ public class krisIngredientList {
 
     public krisIngredientList(ArrayList<krisIngredient> ingredients) {
         this.ingredients = ingredients;
+    
+    }
 
-
+    public ArrayList<krisIngredient> getKrisIngredients() {
+        return ingredients;
     }
 
     public krisIngredient getMatchingKrisIngredient(Ingredient ingredient) {

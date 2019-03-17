@@ -98,10 +98,25 @@ public class Ingredient implements Parcelable {
         new AsyncCaller().execute(this);
     }
 
+
+    public void setServing_size(double serving_size) {
+        this.serving_size = serving_size;
+    }
+
+
+    public void setCO2(double CO2) {
+        this.CO2 = CO2;
+    }
+
+
     public String getFoodCategory() {
         String category = new String(this.category);
         return category;
 
+    }
+    public double getWeight() {
+        double weight = new Double(this.weight);
+        return weight;
     }
 
 

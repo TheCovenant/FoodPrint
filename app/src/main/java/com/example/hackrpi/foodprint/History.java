@@ -35,6 +35,7 @@ public class History extends AppCompatActivity {
     String search_query;
     EditText search_box;
     Button submit_box;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,18 +44,12 @@ public class History extends AppCompatActivity {
         submit_box = findViewById(R.id.searchButton);
         readIngredients();
 
-
     }
 
+
     public void toSearch(View view) {
-        //Intent intent = new Intent(this, searchResult.class);
         search_query = search_box.getText().toString();
         new AsyncCaller().execute(search_query);
-        //ArrayList<Dish> dishes = searchRecipe(search_query);
-        //Toast.makeText(getApplicationContext(), Integer.toString(dishes.size()),
-        //        Toast.LENGTH_SHORT).show();
-        //intent.putParcelableArrayListExtra("dishes", dishes);
-        //startActivity(intent);
     }
 
     public ArrayList<Dish> searchRecipe(String search) {
@@ -118,7 +113,7 @@ public class History extends AppCompatActivity {
                     Ingredient temp_ing = new Ingredient(ingredient_name, amount, temp); //create new ingredient object
                     ingredients_list_final.add(temp_ing);						   //add ingredient to recipe list
                 }
-                Dish dish_info = new Dish(recipe.getString("label"), ingredients_list_final, recipe.getInt("yield") , image_url);
+                Dish dish_info = new Dish(recipe.getString("label"), ingredients_list_final, recipe.getInt("yield") , image_url, this, temp);
                 dish_list.add(dish_info);
             }
 
@@ -183,17 +178,11 @@ public class History extends AppCompatActivity {
                 String b = nextRecord[6];
                 String c = nextRecord[8];
                 a = a.replaceAll(",", "");
-                b = a.replaceAll(",", "");
-                c = a.replaceAll(",", "");
+                b = b.replaceAll(",", "");
+                c = c.replaceAll(",", "");
                 double serving_size = Double.parseDouble(a);
                 double price_per_serving = Double.parseDouble(b);
                 double co2_output = Double.parseDouble(c);
-                //double serving_size = Double.parseDouble(nextRecord[4]);
-                //double price_per_serving = Double.parseDouble(nextRecord[6]);
-                //double co2_output = Double.parseDouble(nextRecord[8]);
-                //double serving_size = format.parse(nextRecord[4]).doubleValue();
-                //double co2_output = format.parse(nextRecord[8]).doubleValue();
-                //double price_per_serving = format.parse(nextRecord[6]).doubleValue();
 
                 krisIngredient ingred = new krisIngredient(food_item, unit, serving_size, (double)1, price_per_serving, co2_output);
                 ingred_list.add(ingred);
