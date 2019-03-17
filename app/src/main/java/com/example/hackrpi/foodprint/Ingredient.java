@@ -6,9 +6,11 @@ public class Ingredient {
     double quantity;
     double weight;
     double CO2 = 0.0;
+    double serving_size;
+    double price_per_serving;
 
 
-    public Ingredient(String name, double weight ) {
+    public Ingredient(String name, double weight, krisIngredientList krisIngredientList ) {
         this.weight = weight;
         double quantity = 0;
         String food = "";
@@ -19,30 +21,28 @@ public class Ingredient {
 
             if(split[i].contains("/")) {
                 String[] fractionString = split[i].split("/");
-                //	System.out.println("Left: " + fractionString[0]);
-                //	System.out.println("Right: " + fractionString[1]);
                 fraction = Double.parseDouble(fractionString[0]) / Double.parseDouble(fractionString[1]);
                 quantity += fraction;
             }
             else {
                 try {
                     double num = Double.parseDouble(split[i]);
-                    //System.out.println("Double: " + num);
                     quantity += num;
                 }
                 catch  (NumberFormatException e){
-                    //	System.out.println("Word");
                     food += split[i];
                     food += " ";
-
                 }
             }
         }
         this.name = food.substring(0, food.length() - 1);
-
         this.quantity = quantity;
-
-
+        krisIngredient matchingIngredient = krisIngredientList.getMatchingKrisIngredient(this);
+        if (!matchingIngredient.equals(null)) {
+            this.CO2 = matchingIngredient.getCO2();
+            this.serving_size = matchingIngredient.getServingSize();
+            this.price_per_serving = matchingIngredient.getPricePerServing();
+        }
     }
 
     public void setQuantity(Double newQuantity) {
@@ -55,6 +55,11 @@ public class Ingredient {
 
     public double getCO2() {
         return this.CO2;
+    }
+
+    public String getName() {
+        String name = new String(this.name);
+        return name;
     }
 
 }
