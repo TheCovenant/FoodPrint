@@ -30,9 +30,11 @@ public class selectServing extends AppCompatActivity {
     {
         if(isInteger((text.getText().toString())))
         {
+            serving = Integer.parseInt(text.getText().toString());
+            dish.setServingCount(serving);
             Intent intent = new Intent(this, resultsPage.class);
             intent.putExtra("object", dish);
-            intent.putExtra("size", serving);
+            intent.putExtra("serving", serving);
             startActivity(intent);
 
         }

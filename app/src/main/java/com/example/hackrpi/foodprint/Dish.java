@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Locale;
 
 import android.content.Context;
+import android.util.Log;
 
 public class Dish implements Parcelable{
 
@@ -27,7 +28,7 @@ public class Dish implements Parcelable{
     private int imageId;
     private String imageUrl;
     private Context context;
-    private krisIngredientList krisList;
+    private static krisIngredientList krisList;
 
     public Dish(String name, List<Ingredient> ingredients, int servingCount, String imageUrl, Context current, krisIngredientList krisList) {
 
@@ -47,16 +48,19 @@ public class Dish implements Parcelable{
 
     public double getTotalCO2() {
         double total = 0.0;
-        this.calculateCO2andServingSize(krisList);
+        this.calculateCO2andServingSize();
         for (int i = 0; i < ingredients.size(); i++) {
            total += ingredients.get(i).getCO2();
         }
         return total;
     }
-    public void calculateCO2andServingSize(krisIngredientList Kris_list) {
-    //    ArrayList<Dish> dishes_list =  new ArrayList<>();
-        //ArrayList<krisIngredient> Kris_list = new ArrayList<>();
-       // Kris_list = krisIngredientList;
+
+    public void giveContext(Context context)
+    {
+        this.context = context;
+    }
+
+    public void calculateCO2andServingSize() {
         double servings;
         double CO2_val;
         boolean found = false;
@@ -83,6 +87,7 @@ public class Dish implements Parcelable{
             nextRecord = null;
             try {
                 nextRecord = csvReader.readNext();
+                Log.d("record", Boolean.toString(nextRecord == null) + "valid");
             }
             catch(IOException e) {
                 }
@@ -117,6 +122,7 @@ public class Dish implements Parcelable{
 
             if(! food_csv.get(food_category).containsKey(food_item)) {
                 food_csv.get(food_category).put(food_item, ingred);
+                Log.d("fC",food_item);
             }
 
         }
@@ -126,11 +132,11 @@ public class Dish implements Parcelable{
 
 
         for(int k = 0; k < this.ingredients.size(); ++k) {
-            for(int j = 0; j < Kris_list.getKrisIngredients().size(); ++j) {
-                if(Kris_list.getKrisIngredients().get(j).getName().contains(this.ingredients.get(k).getName().toLowerCase()) || this.ingredients.get(k).getName().toLowerCase().contains(Kris_list.getKrisIngredients().get(j).getName())) {
+            for(int j = 0; j < krisList.getKrisIngredients().size(); ++j) {
+                if(krisList.getKrisIngredients().get(j).getName().contains(this.ingredients.get(k).getName().toLowerCase()) || this.ingredients.get(k).getName().toLowerCase().contains(krisList.getKrisIngredients().get(j).getName())) {
 
-                    servings = 1/Kris_list.getKrisIngredients().get(j).convertToGrams()*this.ingredients.get(k).getWeight();
-                    CO2_val = servings*Kris_list.getKrisIngredients().get(j).CO2;
+                    servings = 1/krisList.getKrisIngredients().get(j).convertToGrams()*this.ingredients.get(k).getWeight();
+                    CO2_val = servings*krisList.getKrisIngredients().get(j).CO2;
 
                     CO2_val *= servingCount;
                     servings *= servingCount;
@@ -144,17 +150,19 @@ public class Dish implements Parcelable{
 
 
             if(found == false){
-                String foodGroup = "None";
+                String foodGroup = this.ingredients.get(k).getFoodCategory();
+                Log.d("foodGroup",Boolean.toString(foodGroup == null));
+                String foodName = this.ingredients.get(k).getName();
+                if(food_csv.containsKey(foodGroup) && food_csv.get(foodGroup).containsKey(foodName)) {
+                    servings = food_csv.get(foodGroup).get(foodName).convertToGrams() * this.ingredients.get(k).getWeight();
 
-                foodGroup = this.ingredients.get(k).getFoodCategory();
+                    CO2_val = servings * food_csv.get(foodGroup).get(foodGroup).CO2;
+                    CO2_val *= servingCount;
+                    servings *= servingCount;
 
-                servings = food_csv.get(foodGroup).get(foodGroup).convertToGrams()*this.ingredients.get(k).getWeight();
-                CO2_val = servings*food_csv.get(foodGroup).get(foodGroup).CO2;
-                CO2_val *= servingCount;
-                servings *= servingCount;
-
-                this.ingredients.get(k).setCO2(CO2_val);
-                this.ingredients.get(k).setServing_size(servings);
+                    this.ingredients.get(k).setCO2(CO2_val);
+                    this.ingredients.get(k).setServing_size(servings);
+                }
             }
             else {
                 found = false;
@@ -168,14 +176,21 @@ public class Dish implements Parcelable{
         return name;
     }
 
+
     public Drawable getImage()
     {
+        image = LoadImageFromWebOperations(imageUrl);
         return image;
     }
+
 
     public String getUrl() {
         String url = new String(this.imageUrl);
         return url;
+    }
+    public List<Ingredient> getIngredients()
+    {
+        return ingredients;
     }
 
     @Override
@@ -189,6 +204,11 @@ public class Dish implements Parcelable{
         out.writeTypedList(ingredients);
         out.writeInt(servingCount);
         out.writeString(imageUrl);
+
+        //out.writeTypedList(krisList.getKrisIngredients());
+
+        //out.writeParcelable(krisList, PARCELABLE_WRITE_RETURN_VALUE);
+
 
     }
 
@@ -208,9 +228,18 @@ public class Dish implements Parcelable{
         in.readTypedList(ingredients, Ingredient.CREATOR);
         servingCount = in.readInt();
         imageUrl = in.readString();
-        this.image = LoadImageFromWebOperations(imageUrl);
+
+        //ArrayList<krisIngredient> listIngredient = new ArrayList<krisIngredient>();
+        //in.readTypedList(listIngredient,krisIngredient.CREATOR);
+        //krisList = new krisIngredientList(listIngredient);
+
+
+
+
+        //this.image = LoadImageFromWebOperations(imageUrl);
 
     }
+
 
     public Drawable LoadImageFromWebOperations(String url) {
         try {
@@ -221,6 +250,8 @@ public class Dish implements Parcelable{
             return null;
         }
     }
+
+
 }
 
 

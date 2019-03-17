@@ -28,4 +28,5 @@ public class searchResult extends AppCompatActivity {
         resultList.setAdapter(dishAdapter);
 
     }
+
 }

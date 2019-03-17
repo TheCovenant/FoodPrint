@@ -1,6 +1,11 @@
 package com.example.hackrpi.foodprint;
 
-public class krisIngredient {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import java.util.ArrayList;
+
+public class krisIngredient implements Parcelable {
 
     String name;
     String serving_unit;
@@ -59,6 +64,46 @@ public class krisIngredient {
 
     public String toString(){
         return "(" + this.quantity +", " + this.CO2 +"g, " + this.serving_size + this.serving_unit+")";
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel out, int flags) {
+        out.writeString(name);
+        out.writeString(serving_unit);
+        out.writeDouble(quantity);
+        out.writeDouble(CO2);
+        out.writeDouble(serving_size);
+        out.writeDouble(price_per_serving);
+
+
+
+    }
+
+    public static final Parcelable.Creator<krisIngredient> CREATOR = new Parcelable.Creator<krisIngredient>() {
+        public krisIngredient createFromParcel(Parcel in) {
+            return new krisIngredient(in);
+        }
+
+        public krisIngredient[] newArray(int size) {
+            return new krisIngredient[size];
+        }
+    };
+
+    private krisIngredient(Parcel in) {
+        name = in.readString();
+        serving_unit = in.readString();
+        quantity = in.readDouble();
+        CO2 = in.readDouble();
+        serving_size = in.readDouble();
+        price_per_serving = in.readDouble();
+
+
+
     }
 
 }

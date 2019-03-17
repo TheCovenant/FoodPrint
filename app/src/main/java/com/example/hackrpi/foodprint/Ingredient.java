@@ -30,7 +30,7 @@ public class Ingredient implements Parcelable {
     private double CO2 = 0.0;
     private double serving_size;
     private double price_per_serving;
-    private String category;
+    private String category = new String("vegetable");
 
     String[] measurements = new String[] {"frozen", "cups", "cup", "oz", "grams", "gram", "whole",
             "halved", "half", "quartered","cloves", "slices", "Tbsp", "Pinch", "-", "to ", "tsp",
@@ -95,10 +95,13 @@ public class Ingredient implements Parcelable {
             this.serving_size = matchingIngredient.getServingSize();
             this.price_per_serving = matchingIngredient.getPricePerServing();
         }
-        new AsyncCaller().execute(this);
+
     }
 
-
+    public void giveCategory()
+    {
+        new AsyncCaller().execute(this);
+    }
     public void setServing_size(double serving_size) {
         this.serving_size = serving_size;
     }
@@ -110,7 +113,6 @@ public class Ingredient implements Parcelable {
 
 
     public String getFoodCategory() {
-        String category = new String(this.category);
         return category;
 
     }

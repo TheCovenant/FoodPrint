@@ -113,7 +113,8 @@ public class History extends AppCompatActivity {
                     Ingredient temp_ing = new Ingredient(ingredient_name, amount, temp); //create new ingredient object
                     ingredients_list_final.add(temp_ing);						   //add ingredient to recipe list
                 }
-                Dish dish_info = new Dish(recipe.getString("label"), ingredients_list_final, recipe.getInt("yield") , image_url, this, temp);
+
+                Dish dish_info = new Dish(recipe.getString("label"), ingredients_list_final, recipe.getInt("yield") , image_url, getApplicationContext(), temp);
                 dish_list.add(dish_info);
             }
 
