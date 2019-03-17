@@ -1,21 +1,34 @@
 package com.example.hackrpi.foodprint;
 
 import android.graphics.drawable.Drawable;
+import android.os.Parcel;
+import android.os.Parcelable;
 
-public class Dish {
+import java.util.ArrayList;
+import java.util.List;
+
+public class Dish implements Parcelable{
 
     String name;
-    Ingredient[] ingredients;
+    List<Ingredient> ingredients;
     int servingCount;
     Drawable image;
+    int imageId;
 
 
-    public Dish(String name, Ingredient[] ingredients, int servingCount) {
+    public Dish(String name, List<Ingredient> ingredients, int servingCount) {
 
         this.name = name;
         this.ingredients = ingredients;
         this.servingCount = servingCount;
 
+    }
+
+    public Dish(String aName, Drawable aImage, int id)
+    {
+        this.name = aName;
+        this.image = aImage;
+        this.imageId = id;
     }
 
     public void setServingCount(int newServingCount) {
@@ -24,12 +37,44 @@ public class Dish {
 
     public Double getTotalCO2() {
         double total = 0.0;
-        for (int i = 0; i < ingredients.length; i++) {
-           total += ingredients[i].getCO2();
+        for (int i = 0; i < ingredients.size(); i++) {
+           total += ingredients.get(i).getCO2();
         }
         return total;
     }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel out, int flags) {
+        out.writeString(name);
+        out.writeTypedList(ingredients);
+        out.writeInt(servingCount);
+        out.writeInt(imageId);
+
+    }
+
+    public static final Parcelable.Creator<Dish> CREATOR = new Parcelable.Creator<Dish>() {
+        public Dish createFromParcel(Parcel in) {
+            return new Dish(in);
+        }
+
+        public Dish[] newArray(int size) {
+            return new Dish[size];
+        }
+    };
+    private Dish(Parcel in) {
+        name = in.readString();
+        ingredients = new ArrayList<>();
+        in.readTypedList(ingredients, Ingredient.CREATOR);
+        servingCount = in.readInt();
+        imageId = in.readInt();
+    }
 
 
-}
+    }
+
+

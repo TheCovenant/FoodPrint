@@ -21,7 +21,8 @@ public class DishRecyclerAdapter extends RecyclerView.Adapter<DishRecyclerAdapte
         LinearLayout dishLinear;
         CardView dishCard;
 
-        public ViewHolder(View itemView) {
+        public ViewHolder(View itemView)
+        {
             super(itemView);
             dishImage =
                     (ImageView)itemView.findViewById(R.id.dishImage);
@@ -53,6 +54,19 @@ public class DishRecyclerAdapter extends RecyclerView.Adapter<DishRecyclerAdapte
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
         viewHolder.dishText.setText(dishes.get(i).name);
         viewHolder.dishImage.setImageDrawable(dishes.get(i).image);
+        viewHolder.dishImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+        viewHolder.dishText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
 
 
     }
