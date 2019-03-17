@@ -11,13 +11,12 @@ import java.util.List;
 
 public class Dish implements Parcelable{
 
-    String name;
-    List<Ingredient> ingredients;
-    int servingCount;
-    Drawable image;
-    int imageId;
-    String imageUrl;
-
+    private String name;
+    private List<Ingredient> ingredients;
+    private int servingCount;
+    private Drawable image;
+    private int imageId;
+    private String imageUrl;
 
     public Dish(String name, List<Ingredient> ingredients, int servingCount, String imageUrl) {
 
@@ -27,16 +26,6 @@ public class Dish implements Parcelable{
         this.imageUrl = imageUrl;
         this.image = LoadImageFromWebOperations(imageUrl);
 
-    }
-
-    public Dish(String aName, Drawable aImage, int id) {
-        this.name = aName;
-        this.image = aImage;
-        this.imageId = id;
-    }
-
-    public void setServingCount(int newServingCount) {
-        this.servingCount = newServingCount;
     }
 
     public double getTotalCO2() {
@@ -75,6 +64,7 @@ public class Dish implements Parcelable{
             return new Dish[size];
         }
     };
+
     private Dish(Parcel in) {
         name = in.readString();
         ingredients = new ArrayList<>();
@@ -83,8 +73,7 @@ public class Dish implements Parcelable{
         imageId = in.readInt();
     }
 
-    public Drawable LoadImageFromWebOperations(String url)
-    {
+    public Drawable LoadImageFromWebOperations(String url) {
         try {
             InputStream is = (InputStream) new URL(url).getContent();
             Drawable d = Drawable.createFromStream(is, "src name");
@@ -93,6 +82,6 @@ public class Dish implements Parcelable{
             return null;
         }
     }
-    }
+}
 
 
