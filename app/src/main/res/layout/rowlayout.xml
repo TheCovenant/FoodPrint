@@ -6,17 +6,18 @@
 
     <TextView
         android:id="@+id/nameRow"
-        android:layout_width="wrap_content"
+        android:layout_width="100dp"
         android:layout_height="match_parent"
         android:layout_weight="0.5"
+        android:gravity="center_vertical"
         android:text="TextView"
         android:textAppearance="@style/TextAppearance.AppCompat.Body2" />
 
     <TextView
         android:id="@+id/sizeRow"
-        android:layout_width="wrap_content"
+        android:layout_width="100dp"
         android:layout_height="match_parent"
-        android:layout_weight="0.25"
+        android:layout_weight="0.5"
         android:gravity="center_vertical|center_horizontal"
         android:text="TextView"
         android:textAppearance="@style/TextAppearance.AppCompat.Body2"
@@ -24,9 +25,9 @@
 
     <TextView
         android:id="@+id/Co2Row"
-        android:layout_width="wrap_content"
+        android:layout_width="100dp"
         android:layout_height="match_parent"
-        android:layout_weight="0.25"
+        android:layout_weight="0.5"
         android:gravity="center_vertical|center_horizontal"
         android:text="TextView"
         android:textAppearance="@style/TextAppearance.AppCompat.Body2"
