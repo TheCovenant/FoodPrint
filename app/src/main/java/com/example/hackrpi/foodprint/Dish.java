@@ -35,7 +35,7 @@ public class Dish implements Parcelable{
         this.servingCount = newServingCount;
     }
 
-    public Double getTotalCO2() {
+    public double getTotalCO2() {
         double total = 0.0;
         for (int i = 0; i < ingredients.size(); i++) {
            total += ingredients.get(i).getCO2();
