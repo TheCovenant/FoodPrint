@@ -37,7 +37,7 @@ public class resultsPage extends AppCompatActivity {
         serving = intent.getIntExtra("serving", 1);
         table = findViewById(R.id.resultsTable);
         dish.giveContext(this);
-        co2Text.setText("Total(g): " + Double.toString(dish.getTotalCO2()));
+        co2Text.setText("Total(g): " + String.format("%.2f",(dish.getTotalCO2())));
         new DownloadImageTask(realImage).execute(dish.getUrl());
 
 
@@ -50,8 +50,8 @@ public class resultsPage extends AppCompatActivity {
             TextView size = row.findViewById(R.id.sizeRow);
             TextView Co2 = row.findViewById(R.id.Co2Row);
             name.setText(ingredient.getName());
-            size.setText(Double.toString(ingredient.getWeight()));
-            Co2.setText(Double.toString(ingredient.getCO2()));
+            size.setText(String.format("%.2f",(ingredient.getWeight())));
+            Co2.setText(String.format("%.2f",(ingredient.getCO2())));
             table.addView(row);
 
         }
