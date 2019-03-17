@@ -27,6 +27,7 @@ public class Dish implements Parcelable{
     private int imageId;
     private String imageUrl;
     private Context context;
+    private krisIngredientList krisList;
 
     public Dish(String name, List<Ingredient> ingredients, int servingCount, String imageUrl, Context current, krisIngredientList krisList) {
 
@@ -36,12 +37,17 @@ public class Dish implements Parcelable{
         this.imageUrl = imageUrl;
         this.image = LoadImageFromWebOperations(imageUrl);
         this.context = current;
-        this.calculateCO2andServingSize(krisList);
+        this.krisList = krisList;
 
+    }
+
+    public void setServingCount(int servingCount) {
+        this.servingCount = servingCount;
     }
 
     public double getTotalCO2() {
         double total = 0.0;
+        this.calculateCO2andServingSize(krisList);
         for (int i = 0; i < ingredients.size(); i++) {
            total += ingredients.get(i).getCO2();
         }
@@ -125,8 +131,13 @@ public class Dish implements Parcelable{
 
                     servings = 1/Kris_list.getKrisIngredients().get(j).convertToGrams()*this.ingredients.get(k).getWeight();
                     CO2_val = servings*Kris_list.getKrisIngredients().get(j).CO2;
+
+                    CO2_val *= servingCount;
+                    servings *= servingCount;
+
                     this.ingredients.get(k).setCO2(CO2_val);
                     this.ingredients.get(k).setServing_size(servings);
+
                     found = true;
                 }
             }
@@ -139,7 +150,8 @@ public class Dish implements Parcelable{
 
                 servings = food_csv.get(foodGroup).get(foodGroup).convertToGrams()*this.ingredients.get(k).getWeight();
                 CO2_val = servings*food_csv.get(foodGroup).get(foodGroup).CO2;
-
+                CO2_val *= servingCount;
+                servings *= servingCount;
 
                 this.ingredients.get(k).setCO2(CO2_val);
                 this.ingredients.get(k).setServing_size(servings);
