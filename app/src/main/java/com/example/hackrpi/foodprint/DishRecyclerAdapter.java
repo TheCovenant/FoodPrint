@@ -1,5 +1,6 @@
 package com.example.hackrpi.foodprint;
 
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -51,23 +52,27 @@ public class DishRecyclerAdapter extends RecyclerView.Adapter<DishRecyclerAdapte
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
+    public void onBindViewHolder(@NonNull ViewHolder viewHolder, final int i) {
         viewHolder.dishText.setText(dishes.get(i).name);
         viewHolder.dishImage.setImageDrawable(dishes.get(i).image);
         viewHolder.dishImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Intent intent = new Intent(v.getContext(), selectServing.class);
+                intent.putExtra("object", dishes.get(i));
+                v.getContext().startActivity(intent);
             }
         });
 
         viewHolder.dishText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Intent intent = new Intent(v.getContext(), selectServing.class);
+                intent.putExtra("object", dishes.get(i));
+                v.getContext().startActivity(intent);
 
             }
         });
-
 
     }
 

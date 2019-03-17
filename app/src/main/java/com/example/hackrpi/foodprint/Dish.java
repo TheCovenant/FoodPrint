@@ -4,6 +4,8 @@ import android.graphics.drawable.Drawable;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,6 +25,7 @@ public class Dish implements Parcelable{
         this.ingredients = ingredients;
         this.servingCount = servingCount;
         this.imageUrl = imageUrl;
+        this.image = LoadImageFromWebOperations(imageUrl);
 
     }
 
@@ -80,7 +83,16 @@ public class Dish implements Parcelable{
         imageId = in.readInt();
     }
 
-
+    public Drawable LoadImageFromWebOperations(String url)
+    {
+        try {
+            InputStream is = (InputStream) new URL(url).getContent();
+            Drawable d = Drawable.createFromStream(is, "src name");
+            return d;
+        } catch (Exception e) {
+            return null;
+        }
+    }
     }
 
 

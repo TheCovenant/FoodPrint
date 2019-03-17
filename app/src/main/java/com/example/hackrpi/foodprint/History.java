@@ -10,6 +10,9 @@ import java.net.URL;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import android.content.Intent;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import com.opencsv.CSVReader;
 import java.io.InputStream;
@@ -25,10 +28,15 @@ public class History extends AppCompatActivity {
 
 
     krisIngredientList temp;
+    String search_query;
+    EditText search_box;
+    Button submit_box;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_history);
+        search_box = findViewById(R.id.searchBar);
+        submit_box = findViewById(R.id.searchButton);
         readIngredients();
 
 
@@ -36,13 +44,16 @@ public class History extends AppCompatActivity {
 
     public void toSearch(View view) {
         Intent intent = new Intent(this, searchResult.class);
-        startActivity(intent);
-
+        search_query = search_box.getText().toString();
+        ArrayList<Dish> dishes = searchRecipe(search_query);
+        //Toast.makeText(getApplicationContext(), Integer.toString(dishes.size()),
+        //        Toast.LENGTH_SHORT).show();
+        //intent.putParcelableArrayListExtra("dishes", dishes);
+        //startActivity(intent);
     }
 
-    public List<Dish> searchRecipe(String search) {
-
-        List<Dish> dish_list = new ArrayList<>();
+    public ArrayList<Dish> searchRecipe(String search) {
+        ArrayList<Dish> dish_list = new ArrayList<>();
         String app_id = "6c5d04e2"; //do not change these values
         String app_key = "efc4f5c31a452257862f8a8153d2c6d4"; //do not change these values
         String user_input = search; //Default value is chicken
@@ -55,9 +66,14 @@ public class History extends AppCompatActivity {
         try {
             URL obj = new URL(url);
 
-            HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+
+            HttpURLConnection con = (HttpURLConnection)obj.openConnection();
 
             BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+            search_box.setVisibility(View.INVISIBLE);
+            Toast.makeText(getApplicationContext(), "yo",
+                    Toast.LENGTH_SHORT).show();
+
 
             String inputLine;
             StringBuffer response = new StringBuffer();
@@ -65,9 +81,10 @@ public class History extends AppCompatActivity {
                 response.append(inputLine);
             }
             in.close();
-
             JSONObject myresponse = new JSONObject(response.toString());
             JSONArray hits = (JSONArray) myresponse.get("hits");
+
+
 
             for ( int i = 0; i < hits.length(); i++) {
 
@@ -104,7 +121,6 @@ public class History extends AppCompatActivity {
         catch(Exception JSONException){
             System.out.println("HI IF YOU SEE PLEASE REPORT TO ERROR TEAM");
         }
-
         return dish_list;
 
     }

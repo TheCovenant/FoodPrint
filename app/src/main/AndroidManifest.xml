@@ -16,7 +16,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".searchResult"></activity>
+        <activity android:name=".searchResult" />
+        <activity android:name=".selectServing" />
+        <activity android:name=".resultsPage"></activity>
     </application>
 
 </manifest>
