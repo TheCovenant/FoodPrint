@@ -58,6 +58,7 @@ public class History extends AppCompatActivity {
     }
 
     public ArrayList<Dish> searchRecipe(String search) {
+        long startTime = System.nanoTime();
         ArrayList<Dish> dish_list = new ArrayList<>();
         String app_id = "6c5d04e2"; //do not change these values
         String app_key = "efc4f5c31a452257862f8a8153d2c6d4"; //do not change these values
@@ -115,7 +116,7 @@ public class History extends AppCompatActivity {
                         System.out.println("NUMBER ERROR");
                     }
                     Ingredient temp_ing = new Ingredient(ingredient_name, amount, temp); //create new ingredient object
-                    ingredients_list_final.set(t, temp_ing);						   //add ingredient to recipe list
+                    ingredients_list_final.add(temp_ing);						   //add ingredient to recipe list
                 }
                 Dish dish_info = new Dish(recipe.getString("label"), ingredients_list_final, recipe.getInt("yield") , image_url);
                 dish_list.add(dish_info);
@@ -123,10 +124,19 @@ public class History extends AppCompatActivity {
 
         }
         catch(Exception JSONException){
+            Log.e("error","searchRecipe");
             Log.e("error",JSONException.toString());
-            Log.e("error",Integer.toString(JSONException.getStackTrace()[1].getLineNumber()));
+            for (int x = 0; x < JSONException.getStackTrace().length; ++x)
+            {
+                Log.e("error",Integer.toString(JSONException.getStackTrace()[x].getLineNumber()));
+            }
+            Log.e("error",Integer.toString(JSONException.getStackTrace()[4].getLineNumber()));
         }
 
+        long endTime = System.nanoTime();
+        long duration = (endTime - startTime);
+        duration = duration/1000000000;
+        Log.d("Time", "Time for searching is" + Double.toString(duration) + "seconds");
         return dish_list;
 
     }
@@ -169,9 +179,21 @@ public class History extends AppCompatActivity {
                 String food_item = nextRecord[0].toLowerCase();
                 String food_category = nextRecord[1].toLowerCase();
                 NumberFormat format = NumberFormat.getInstance(Locale.FRANCE);
-                double serving_size = format.parse(nextRecord[4]).doubleValue();
-                double co2_output = format.parse(nextRecord[8]).doubleValue();
-                double price_per_serving = format.parse(nextRecord[6]).doubleValue();
+                String a = nextRecord[4];
+                String b = nextRecord[6];
+                String c = nextRecord[8];
+                a = a.replaceAll(",", "");
+                b = a.replaceAll(",", "");
+                c = a.replaceAll(",", "");
+                double serving_size = Double.parseDouble(a);
+                double price_per_serving = Double.parseDouble(b);
+                double co2_output = Double.parseDouble(c);
+                //double serving_size = Double.parseDouble(nextRecord[4]);
+                //double price_per_serving = Double.parseDouble(nextRecord[6]);
+                //double co2_output = Double.parseDouble(nextRecord[8]);
+                //double serving_size = format.parse(nextRecord[4]).doubleValue();
+                //double co2_output = format.parse(nextRecord[8]).doubleValue();
+                //double price_per_serving = format.parse(nextRecord[6]).doubleValue();
 
                 krisIngredient ingred = new krisIngredient(food_item, unit, serving_size, (double)1, price_per_serving, co2_output);
                 ingred_list.add(ingred);
@@ -200,8 +222,12 @@ public class History extends AppCompatActivity {
                 food_csv.get(category.getKey()).put(category.getKey(), n);
             }
         }
-        catch (Exception e) {
-            e.printStackTrace();
+        catch (Exception e)
+        {
+            Log.e("error","readingredients");
+            Log.e("error",e.toString());
+            int last = e.getStackTrace().length;
+            Log.e("error",Integer.toString(e.getStackTrace()[1].getLineNumber()));
         }
 
         temp = new krisIngredientList(ingred_list);
@@ -224,14 +250,21 @@ public class History extends AppCompatActivity {
             return searchRecipe(params[0]);
 
 
+
+
         }
 
         @Override
         protected void onPostExecute(ArrayList<Dish> result) {
+            long startTime = System.nanoTime();
             Toast.makeText(getApplicationContext(), Integer.toString(result.size()),
                     Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(search_box.getContext(), searchResult.class);
             intent.putParcelableArrayListExtra("dishes", result);
+            long endTime = System.nanoTime();
+            long duration = (endTime - startTime);
+            duration = duration/1000000000;
+            Log.d("Time", "Time for displaying is" + Double.toString(duration) + "seconds");
             startActivity(intent);
 
 

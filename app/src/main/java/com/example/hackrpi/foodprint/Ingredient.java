@@ -1,7 +1,11 @@
 package com.example.hackrpi.foodprint;
 
+import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
+import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -10,6 +14,7 @@ import java.net.URL;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.util.ArrayList;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -85,18 +90,18 @@ public class Ingredient implements Parcelable {
         this.name = this.name.trim();
         this.quantity = quantity;
         krisIngredient matchingIngredient = krisIngredientList.getMatchingKrisIngredient(this);
-        if (!matchingIngredient.equals(null)) {
+        if (!(matchingIngredient == null)) {
             this.CO2 = matchingIngredient.getCO2();
             this.serving_size = matchingIngredient.getServingSize();
             this.price_per_serving = matchingIngredient.getPricePerServing();
         }
-
-        this.category = checkFoodGroup(this.name);
+        new AsyncCaller().execute(this);
     }
 
     public String getFoodCategory() {
         String category = new String(this.category);
         return category;
+
     }
 
 
@@ -124,7 +129,15 @@ public class Ingredient implements Parcelable {
     public void writeToParcel(Parcel out, int flags) {
         out.writeString(name);
         out.writeDouble(quantity);
+        out.writeDouble(weight);
         out.writeDouble(CO2);
+        out.writeDouble(serving_size);
+        out.writeDouble(price_per_serving);
+        out.writeString(category);
+
+
+
+
 
     }
 
@@ -140,12 +153,17 @@ public class Ingredient implements Parcelable {
     private Ingredient(Parcel in) {
         name = in.readString();
         quantity = in.readDouble();
+        weight = in.readDouble();
         CO2 = in.readDouble();
+        serving_size = in.readDouble();
+        price_per_serving = in.readDouble();
+        category = in.readString();
+
     }
 
 
 
-    private static String checkFoodGroup(String query){
+    private String checkFoodGroup(String query){
         String api_key = "MmDv3nmqjdaGaeFv5PRopinUeCX2vmP45mB0Chcv"; //do not change these values
         if(query.contains(" ")) {
             query = query.replaceAll(" ", "%20");
@@ -192,6 +210,33 @@ public class Ingredient implements Parcelable {
         }
 
         return fg_name;
+    }
+
+    private class AsyncCaller extends AsyncTask<Ingredient, Void, Void>
+    {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+            //this method will be running on UI thread
+
+        }
+        @Override
+        protected Void doInBackground(Ingredient... params)
+        {
+            params[0].category = checkFoodGroup(params[0].getName());
+            Log.d("category: ", params[0].category);
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            super.onPostExecute(result);
+
+
+        }
+
     }
 
 

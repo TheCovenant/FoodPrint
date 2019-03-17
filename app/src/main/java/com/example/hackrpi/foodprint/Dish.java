@@ -62,7 +62,7 @@ public class Dish implements Parcelable{
         out.writeString(name);
         out.writeTypedList(ingredients);
         out.writeInt(servingCount);
-        out.writeInt(imageId);
+        out.writeString(imageUrl);
 
     }
 
@@ -81,7 +81,9 @@ public class Dish implements Parcelable{
         ingredients = new ArrayList<>();
         in.readTypedList(ingredients, Ingredient.CREATOR);
         servingCount = in.readInt();
-        imageId = in.readInt();
+        imageUrl = in.readString();
+        this.image = LoadImageFromWebOperations(imageUrl);
+
     }
 
     public Drawable LoadImageFromWebOperations(String url) {
