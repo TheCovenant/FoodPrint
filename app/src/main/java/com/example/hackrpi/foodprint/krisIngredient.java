@@ -32,7 +32,12 @@ public class krisIngredient implements Parcelable {
             return serving_size * 14.3;
         }else if(serving_unit.equals("ounce")) {
             return serving_size * 28.3495;
-        } return serving_size;
+        }else if(serving_unit.equals("egg")) {
+            return serving_size * 50;
+        }else if(serving_unit.equals("fl. Oz.")) {
+            return serving_size * 29.5735296875;
+        }
+        return serving_size;
     }
 
     public double getPricePerServing() {

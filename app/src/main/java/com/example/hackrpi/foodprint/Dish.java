@@ -125,9 +125,9 @@ public class Dish implements Parcelable{
                 food_csv.get(food_category).put(food_item, ingred);
                 Log.d("fC",food_item);
             }
-//            Log.d("food_csv", (food_csv.toString()));
-//            Log.d("KrisListSize", Integer.toString(krisList.getKrisIngredients().size()));
-//            Log.d("servingCount", Integer.toString(servingCount));
+            Log.d("food_csv", (food_csv.toString()));
+            Log.d("KrisListSize", Integer.toString(krisList.getKrisIngredients().size()));
+            Log.d("servingCount", Integer.toString(servingCount));
         }
         for(HashMap.Entry<String, HashMap<String, krisIngredient>> category: food_csv.entrySet()){
             //Log.d("F_test", "Work damn it " + food_csv.toString());
@@ -166,10 +166,11 @@ public class Dish implements Parcelable{
 
                     this.ingredients.get(k).setCO2(CO2_val);
                     this.ingredients.get(k).setServing_size(servings);
-//                    Log.d("testCalc", "TestVal: " + krisList.getKrisIngredients().get(j).getName()+ ", " + Double.toString(1/krisList.getKrisIngredients().get(j).convertToGrams()));
-//                    Log.d("testCalc", "weightVal: " + krisList.getKrisIngredients().get(j).getName()+ ", " + Double.toString(this.ingredients.get(k).getWeight()));
-//                    Log.d("testCalc", "CO2Val: " +krisList.getKrisIngredients().get(j).getName()+ ", " + Double.toString(CO2_val));
-//                    Log.d("testCalc", "Serving Size: " +krisList.getKrisIngredients().get(j).getName()+ ", " + Double.toString(servings));
+                    this.ingredients.get(k).setWeight(this.ingredients.get(k).getWeight() * servingCount);
+                    Log.d("testCalc", "TestVal: " + krisList.getKrisIngredients().get(j).getName()+ ", " + Double.toString(1/krisList.getKrisIngredients().get(j).convertToGrams()));
+                    Log.d("testCalc", "weightVal: " + krisList.getKrisIngredients().get(j).getName()+ ", " + Double.toString(this.ingredients.get(k).getWeight()));
+                    Log.d("testCalc", "CO2Val: " +krisList.getKrisIngredients().get(j).getName()+ ", " + Double.toString(CO2_val));
+                    Log.d("testCalc", "Serving Size: " +krisList.getKrisIngredients().get(j).getName()+ ", " + Double.toString(servings));
                     found = true;
                     break;
                 }
@@ -182,15 +183,16 @@ public class Dish implements Parcelable{
                 String foodName = this.ingredients.get(k).getName();
                 Log.d("wtfGuy",food_csv.get(foodGroup).toString());
                 if(food_csv.containsKey(foodGroup) && food_csv.get(foodGroup).containsKey(foodGroup)) {
-                    servings = 1/food_csv.get(foodGroup).get(foodGroup).convertToGrams() * this.ingredients.get(k).getWeight();
+                    servings = (double)1/food_csv.get(foodGroup).get(foodGroup).convertToGrams() * this.ingredients.get(k).getWeight();
 
                     CO2_val = servings * food_csv.get(foodGroup).get(foodGroup).getCO2();
+                    this.ingredients.get(k).setWeight(this.ingredients.get(k).getWeight() * servingCount);
                     CO2_val *= servingCount;
                     servings *= servingCount;
-                    //Log.d("testFalse", "TestVal: " + foodGroup+ ", " + Double.toString(1/krisList.getKrisIngredients().get(j).convertToGrams()));
-//                    Log.d("testFalse", "weightVal: " + foodGroup+ ", " + Double.toString(this.ingredients.get(k).getWeight()));
-//                    Log.d("testFalse", "CO2Val: " +foodGroup+ ", " + Double.toString(CO2_val));
-//                    Log.d("testFalse", "Serving Size: " +foodGroup+ ", " + Double.toString(servings));
+                    Log.d("testFalse", "Serving Conversion: " + foodGroup+ ", " + Double.toString(food_csv.get(foodGroup).get(foodGroup).convertToGrams()));
+                    Log.d("testFalse", "weightVal: " + foodGroup+ ", " + Double.toString(this.ingredients.get(k).getWeight()));
+                    Log.d("testFalse", "CO2Val: " +foodGroup+ ", " + Double.toString(CO2_val));
+                    Log.d("testFalse", "Serving Size: " +foodGroup+ ", " + Double.toString(servings));
                     this.ingredients.get(k).setCO2(CO2_val);
                     this.ingredients.get(k).setServing_size(servings);
                 }

@@ -120,7 +120,9 @@ public class Ingredient implements Parcelable {
         double weight = new Double(this.weight);
         return weight;
     }
-
+    public void setWeight(double weight){
+        this.weight = new Double(weight);
+    }
 
     public double getQuantity() {
         double quantity = new Double(this.quantity);
