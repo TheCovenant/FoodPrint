@@ -15,6 +15,7 @@ import java.net.URL;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -113,8 +114,8 @@ public class Ingredient implements Parcelable {
 
 
     public String getFoodCategory() {
-        return category;
-
+        //return this.checkFoodGroup(this.name);
+        return this.category;
     }
     public double getWeight() {
         double weight = new Double(this.weight);
@@ -187,47 +188,76 @@ public class Ingredient implements Parcelable {
         if(query.contains(" ")) {
             query = query.replaceAll(" ", "%20");
         }
-        String[] fg_IDs = new String[] {"0200", 	"0100", "0500", "0700", "1000", "1500", "1100", "0900", "1600", "1200", "2000", "0400"};
+        String[] fg_IDs = new String[] {"0200", "0100", "0500", "0700", "1000", "1500", "1100", "0900", "1600", "1200", "2000", "0400"};
         String[] fg_names = new String[] {"other", "dairy", "meat", "meat", "meat", "meat", "vegetables", "fruit", "nuts/seeds/legume", "nuts/seeds/legume", "grain", "oil"};
+        HashMap<String, Integer> count = new HashMap<>();
+
         String url;
         int max_hit = 0;
         String fg_name = "";
-        for(int i = 0; i < fg_IDs.length; ++i) {
-            url = "https://api.nal.usda.gov/ndb/?format=json&q="+query+"&sort=n&max=25&offset=0&fg="+fg_IDs[i]+"&api_key=" + api_key;
-            try {
-                URL obj = new URL(url);
+        url = "https://api.nal.usda.gov/ndb/?format=json&q="+query+"&sort=n&max=400&offset=0&api_key=" + api_key;
+        try {
+            URL obj = new URL(url);
 
-                HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-                BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+            HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+            BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
 
-                String inputLine;
-                StringBuffer response = new StringBuffer();
-                while((inputLine = in.readLine()) != null) {
-                    response.append(inputLine);
+            String inputLine;
+            StringBuffer response = new StringBuffer();
+            while((inputLine = in.readLine()) != null) {
+                response.append(inputLine);
+            }
+            in.close();
+
+            JSONArray items = (JSONArray)  ((JSONObject) new JSONObject(response.toString()).get("list")).get("item");
+            Log.d("CheckFoodGroup","Created JSONArray: " + items.toString());
+            for(int i = 0; i < items.length(); ++i) {
+
+                JSONObject val = items.getJSONObject(i);
+                String group = val.get("group").toString();
+                if (group.equals("Branded Food Products Database")) {
+                    continue;
                 }
-                in.close();
 
-                JSONObject myResponse = new JSONObject(response.toString());
-                JSONObject hits = (JSONObject) myResponse.get("list");
-                JSONArray items = (JSONArray) hits.get("item");
+                //  System.out.println(group);
+                for(int j = 0; j < fg_IDs.length; ++j) {
+                    if (group.toLowerCase().contains(fg_names[j])) {
+                        if (!count.containsKey(fg_names[j])) {
+                            count.put(fg_names[j], 0);
+                        }
+                        count.put(fg_names[j], count.get(fg_names[j]) + 1);
+                    }
 
-                if(items.length() > max_hit){
-                    max_hit = items.length();
+                }
+
+            }
+            Log.d("CheckFoodGroup","Past the items List " + count.toString());
+
+            for(int i = 0; i < fg_IDs.length; ++i) {
+                if (count.containsKey(fg_names[i]) && count.get(fg_names[i]) > max_hit) {
+                    max_hit = count.get(fg_names[i]);
                     fg_name = fg_names[i];
                 }
             }
-            catch(JSONException e){
-            }
-            catch(MalformedURLException e) {
-            }
-            catch(IOException e) {
-            }
+
+            Log.d("CheckFoodGroup","Max checker " + fg_name.toString());
+
 
         }
+        catch(JSONException e){
+        }
+        catch(MalformedURLException e) {
+        }
+        catch(IOException e) {
+        }
+
+
         if(max_hit == 0) {
+            Log.d("CheckFoodGroup","at final return other (expect empty)" + fg_name.toString() + "\n");
             return "other";
         }
-
+        System.currentTimeMillis();
+        Log.d("CheckFoodGroup","at final return" + fg_name.toString() + "\n");
         return fg_name;
     }
 
