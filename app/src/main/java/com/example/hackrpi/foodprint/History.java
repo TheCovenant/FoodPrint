@@ -202,6 +202,7 @@ public class History extends AppCompatActivity {
                     m_pricing_list.add(food_csv.get(category.getKey()).get(item.getKey()).getPricePerServing());
                     m_ss_list.add(food_csv.get(category.getKey()).get(item.getKey()).convertToGrams());
                 }
+
                 Collections.sort(m_CO2_list);
                 Collections.sort(m_pricing_list);
                 Collections.sort(m_ss_list);
@@ -211,6 +212,7 @@ public class History extends AppCompatActivity {
                 krisIngredient n = new krisIngredient(category.getKey(), "g", m_ss, (double)1, m_price, m_CO2);
                 food_csv.get(category.getKey()).put(category.getKey(), n);
             }
+
         }
         catch (Exception e)
         {
@@ -221,6 +223,8 @@ public class History extends AppCompatActivity {
         }
 
         temp = new krisIngredientList(ingred_list);
+        Log.d("KrisIngredientsSize", Integer.toString(temp.getKrisIngredients().size()));
+        Log.d("KrisIngredientsList", temp.getKrisIngredients().toString());
     }
 
     private class AsyncCaller extends AsyncTask<String, Void, ArrayList<Dish>>

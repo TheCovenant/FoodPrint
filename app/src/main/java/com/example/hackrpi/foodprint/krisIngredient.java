@@ -29,7 +29,7 @@ public class krisIngredient implements Parcelable {
         if(serving_unit.equals("lbs")) {
             return serving_size * 453.592;
         }else if(serving_unit.equals("tbsp")) {
-            return serving_size * 12;
+            return serving_size * 14.3;
         }else if(serving_unit.equals("ounce")) {
             return serving_size * 28.3495;
         } return serving_size;
@@ -63,7 +63,7 @@ public class krisIngredient implements Parcelable {
     }
 
     public String toString(){
-        return "(" + this.quantity +", " + this.CO2 +"g, " + this.serving_size + this.serving_unit+")";
+        return "(" + this.name + this.quantity +", " + this.CO2 +"g, " + this.serving_size + this.serving_unit+")";
     }
 
     @Override

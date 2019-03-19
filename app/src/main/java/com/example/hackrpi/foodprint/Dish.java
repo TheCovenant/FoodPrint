@@ -12,6 +12,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -124,18 +125,40 @@ public class Dish implements Parcelable{
                 food_csv.get(food_category).put(food_item, ingred);
                 Log.d("fC",food_item);
             }
-
+//            Log.d("food_csv", (food_csv.toString()));
+//            Log.d("KrisListSize", Integer.toString(krisList.getKrisIngredients().size()));
+//            Log.d("servingCount", Integer.toString(servingCount));
         }
-
-
-
-
+        for(HashMap.Entry<String, HashMap<String, krisIngredient>> category: food_csv.entrySet()){
+            //Log.d("F_test", "Work damn it " + food_csv.toString());
+            ArrayList<Double> m_CO2_list = new ArrayList<Double>();
+            ArrayList<Double> m_pricing_list = new ArrayList<Double>();;
+            ArrayList<Double> m_ss_list= new ArrayList<Double>();;
+            //Log.d("F_test", "Made it passed the arrayList Initializations" + food_csv.get(category.getKey()));
+            for(HashMap.Entry<String, krisIngredient> item: food_csv.get(category.getKey()).entrySet()){
+                //Log.d("F_test","made it into the inner group \n"+ item.getKey());
+                m_CO2_list.add(food_csv.get(category.getKey()).get(item.getKey()).getCO2());
+                m_pricing_list.add(food_csv.get(category.getKey()).get(item.getKey()).getPricePerServing());
+                m_ss_list.add(food_csv.get(category.getKey()).get(item.getKey()).convertToGrams());
+                //Log.d("F_test","added inner group");
+            }
+            //Log.d("F_test","made it to the end");
+            Collections.sort(m_CO2_list);
+            Collections.sort(m_pricing_list);
+            Collections.sort(m_ss_list);
+            double m_CO2 = m_CO2_list.get(m_CO2_list.size()/2);
+            double m_price = m_pricing_list.get(m_pricing_list.size()/2);
+            double m_ss = m_ss_list.get(m_ss_list.size()/2);
+            krisIngredient n = new krisIngredient(category.getKey(), "g", m_ss, (double)1, m_price, m_CO2);
+            //Log.d("testFoodCSV",category.getKey());
+            food_csv.get(category.getKey()).put(category.getKey(), n);
+        }
 
         for(int k = 0; k < this.ingredients.size(); ++k) {
             for(int j = 0; j < krisList.getKrisIngredients().size(); ++j) {
                 if(krisList.getKrisIngredients().get(j).getName().contains(this.ingredients.get(k).getName().toLowerCase()) || this.ingredients.get(k).getName().toLowerCase().contains(krisList.getKrisIngredients().get(j).getName())) {
 
-                    servings = 1/krisList.getKrisIngredients().get(j).convertToGrams()*this.ingredients.get(k).getWeight();
+                    servings = (double)1/krisList.getKrisIngredients().get(j).convertToGrams()*this.ingredients.get(k).getWeight();
                     CO2_val = servings*krisList.getKrisIngredients().get(j).CO2;
 
                     CO2_val *= servingCount;
@@ -143,23 +166,31 @@ public class Dish implements Parcelable{
 
                     this.ingredients.get(k).setCO2(CO2_val);
                     this.ingredients.get(k).setServing_size(servings);
-
+//                    Log.d("testCalc", "TestVal: " + krisList.getKrisIngredients().get(j).getName()+ ", " + Double.toString(1/krisList.getKrisIngredients().get(j).convertToGrams()));
+//                    Log.d("testCalc", "weightVal: " + krisList.getKrisIngredients().get(j).getName()+ ", " + Double.toString(this.ingredients.get(k).getWeight()));
+//                    Log.d("testCalc", "CO2Val: " +krisList.getKrisIngredients().get(j).getName()+ ", " + Double.toString(CO2_val));
+//                    Log.d("testCalc", "Serving Size: " +krisList.getKrisIngredients().get(j).getName()+ ", " + Double.toString(servings));
                     found = true;
+                    break;
                 }
             }
 
 
             if(found == false){
                 String foodGroup = this.ingredients.get(k).getFoodCategory();
-                Log.d("foodGroup",Boolean.toString(foodGroup == null));
+                Log.d("foodGroup",foodGroup);
                 String foodName = this.ingredients.get(k).getName();
-                if(food_csv.containsKey(foodGroup) && food_csv.get(foodGroup).containsKey(foodName)) {
-                    servings = food_csv.get(foodGroup).get(foodName).convertToGrams() * this.ingredients.get(k).getWeight();
+                Log.d("wtfGuy",food_csv.get(foodGroup).toString());
+                if(food_csv.containsKey(foodGroup) && food_csv.get(foodGroup).containsKey(foodGroup)) {
+                    servings = 1/food_csv.get(foodGroup).get(foodGroup).convertToGrams() * this.ingredients.get(k).getWeight();
 
-                    CO2_val = servings * food_csv.get(foodGroup).get(foodGroup).CO2;
+                    CO2_val = servings * food_csv.get(foodGroup).get(foodGroup).getCO2();
                     CO2_val *= servingCount;
                     servings *= servingCount;
-
+                    //Log.d("testFalse", "TestVal: " + foodGroup+ ", " + Double.toString(1/krisList.getKrisIngredients().get(j).convertToGrams()));
+//                    Log.d("testFalse", "weightVal: " + foodGroup+ ", " + Double.toString(this.ingredients.get(k).getWeight()));
+//                    Log.d("testFalse", "CO2Val: " +foodGroup+ ", " + Double.toString(CO2_val));
+//                    Log.d("testFalse", "Serving Size: " +foodGroup+ ", " + Double.toString(servings));
                     this.ingredients.get(k).setCO2(CO2_val);
                     this.ingredients.get(k).setServing_size(servings);
                 }
